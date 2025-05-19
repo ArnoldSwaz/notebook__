@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "247565841355",
+    "project_id": "notebook-8b98e",
+    "storage_bucket": "notebook-8b98e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247565841355:android:7be260cd4f450217a07c4e",
+        "android_client_info": {
+          "package_name": "com.swaz.notebook"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuonHO_7iBKEhKn5g9XA6_Ji0tPNvnphE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

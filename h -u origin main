@@ -1,0 +1,8 @@
+core.repositoryformatversion=0
+core.filemode=true
+core.bare=false
+core.logallrefupdates=true
+user.name=Swaz.10
+user.email=arnoldswaz.10@proton.me
+remote.origin.url=https://github.com/ArnoldSwaz/Notebook.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
