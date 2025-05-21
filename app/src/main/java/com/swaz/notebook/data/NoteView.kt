@@ -15,49 +15,100 @@ class NoteView : ViewModel(){
     )
     val notes : StateFlow<List<Note>> = _note
 
-    init {
-        fetchNotes()
-    }
-    private fun fetchNotes()
+
+    fun fetchNotes(
+        userId : String
+    )
     {
         ref.orderBy("timestamp",
             Query.Direction.DESCENDING
 
         )
-            .addSnapshotListener { snapshot, _ ->
+            db.collection("users")
+                .document(userId)
+                .collection("notes")
+                .addSnapshotListener { snapshot, error ->
                 if (
-                    snapshot != null &&
-                    ! snapshot.isEmpty
+                    error != null
                 )
                 {
-                    val list = snapshot.documents.map {
-                        it.toObject( Note::class.java)!!.copy( id = it.id)
-                    }
-                    _note.value = list
+                   return@addSnapshotListener
                 }
+                    val list = snapshot?.documents?.mapNotNull { doc ->
+                        doc.toObject(Note::class.java)!!.copy(id = doc.id)
+                    }
+                        ?: emptyList()
+                    _note.value = list
             }
     }
-    fun addNote( note : Note)
-    {
-        ref.add(note)
-    }
-    fun updateNote( note : Note)
-    {
-        ref.document(note.id).set(note)
-    }
-    fun deleteNote( id : String )
-    {
-       ref.document(id).delete()
-    }
-    fun getNoteById(
-        id: String,
-        onResult : (Note?) -> Unit
+    fun addNote(
+        userId : String,
+        title : String,
+        content : String,
+        onComplete : () -> Unit = {}
     )
     {
-        ref.document(id).get()
+        val note = Note(
+            title = title,
+            content = content,
+            timestamp = System.currentTimeMillis()
+        )
+        db.collection("users")
+            .document(userId)
+            .collection("notes")
+            .add(note)
             .addOnSuccessListener {
-                val note = it.toObject(Note::class.java)
-                    ?.copy( id = it.id)
+                onComplete()
             }
+            .addOnFailureListener {
+                onComplete()
+            }
+
+    }
+    fun updateNote(
+        userId : String,
+        noteId : String,
+        title : String,
+        content : String,
+        onComplete : () -> Unit = {}
+
+    )
+    {
+        val uptNote = mapOf(
+            "title" to  title,
+            "content" to  content,
+            "timestamp" to System.currentTimeMillis()
+
+        )
+        db.collection("users")
+            .document(userId)
+            .collection("notes")
+            .document(noteId)
+            .update(uptNote)
+            .addOnSuccessListener {
+                onComplete()
+            }
+            .addOnFailureListener {
+                onComplete()
+            }
+    }
+    fun deleteNote(
+        userId : String,
+        noteId : String,
+    )
+    {
+        db.collection("users")
+            .document(userId)
+            .collection("notes")
+            .document(noteId)
+            .delete()
+    }
+    fun getNoteById(
+        noteId: String,
+    )
+    :Note?
+    {
+        return _note.value.find { it.id == noteId }
+
     }
 }
